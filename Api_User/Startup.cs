@@ -32,7 +32,7 @@ namespace Api_User
             {
                 c.SwaggerDoc("v1", new Info
                 {
-                    Title = "APIUser",
+                    Title = "UserRest",
                     Version = "v1",
                     Contact = new Contact
                     {
