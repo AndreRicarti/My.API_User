@@ -41,5 +41,25 @@ namespace Api_User.Repository
             userDbContext.User.Update(user);
             userDbContext.SaveChanges();
         }
+
+        public User Login(string email, string senha)
+        {
+            User user = new User();
+
+            var entity = userDbContext
+                            .User
+                            .FirstOrDefault(u => u.Email == email && u.Password == senha);
+
+            if (entity != null)
+            {
+                user.Id = entity.Id;
+                user.Name = entity.Name;
+                user.Password = entity.Password;
+
+                return user;
+            }
+
+            return entity;
+        }
     }
 }

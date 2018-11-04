@@ -10,5 +10,6 @@ namespace Api_User.Repository
         User Find(long id);
         void Remove(long id);
         void Update(User user);
+        User Login(string email, string senha);
     }
 }

@@ -81,5 +81,22 @@ namespace Api_User.Controllers
 
             return new NoContentResult();
         }
+
+        /// <summary>
+        /// Verifica se o cliente esta apto para realizar o login
+        /// </summary>
+        /// <param name="email">Email do Usuário</param>
+        /// <param name="senha">Senha do Usuário</param>
+        /// <returns></returns>
+        [HttpGet("{email}, {senha}", Name = "Login")]
+        public ActionResult<string> Login(string email, string senha)
+        {
+            var user = userRepository.Login(email, senha);
+
+            if (user == null)
+                return NotFound("E-mail ou senha incorreto.");
+
+            return new ObjectResult(user);
+        }
     }
 }
