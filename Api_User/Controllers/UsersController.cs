@@ -85,13 +85,12 @@ namespace Api_User.Controllers
         /// <summary>
         /// Verifica se o cliente esta apto para realizar o login
         /// </summary>
-        /// <param name="email">Email do Usuário</param>
-        /// <param name="senha">Senha do Usuário</param>
+        /// <param name="loginBody">Dados do usuário para o login</param>
         /// <returns></returns>
-        [HttpGet("{email}, {senha}", Name = "Login")]
-        public ActionResult<string> Login(string email, string senha)
+        [HttpPost("/api/Users/Login", Name = "Login")]
+        public IActionResult Login([FromBody]LoginBody loginBody)
         {
-            var user = userRepository.Login(email, senha);
+            var user = userRepository.Login(loginBody.Email, loginBody.Senha);
 
             if (user == null)
                 return NotFound("E-mail ou senha incorreto.");

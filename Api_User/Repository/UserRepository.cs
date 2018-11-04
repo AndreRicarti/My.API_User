@@ -54,7 +54,7 @@ namespace Api_User.Repository
             {
                 user.Id = entity.Id;
                 user.Name = entity.Name;
-                user.Password = entity.Password;
+                user.Email = entity.Email;
 
                 return user;
             }
