@@ -15,8 +15,8 @@ namespace Api_User.Controllers
     [ApiController]
     public class FirebaseController : ControllerBase
     {
-        [HttpPost("/api/Users/Login", Name = "Login")]
-        public IActionResult Login()
+        [HttpPost("/api/Firebase", Name = "Firebase")]
+        public void Firebase()
         {
             WebRequest tRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");
             tRequest.Method = "post";
@@ -27,7 +27,7 @@ namespace Api_User.Controllers
             tRequest.ContentType = "application/json";
             var payload = new
             {
-                to = "e8EHtMwqsZY:APA91bFUktufXdsDLdXXXXXX..........XXXXXXXXXXXXXX",
+                to = "f76rEtTa_vk:APA91bGd3xRqWcZP5PhhKimxO2odR2J--vBJuiAlx2b7sMvu3t65brLzhSJt6_QP6uVSJfAlp_OAPMOPv2lVop1klQWsBNZxlkWW93wbzbfVzAhz2Mw87EPSZ6Vhp55alVr_F3i6iwzy",
                 priority = "high",
                 content_available = true,
                 notification = new
