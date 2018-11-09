@@ -94,6 +94,11 @@ namespace Api_User.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (firebaseUserToken.UserId != 0)
+            {
+                firebaseUserToken.User = null;
+            }
+
             _context.FirebaseUserTokens.Add(firebaseUserToken);
             await _context.SaveChangesAsync();
 
