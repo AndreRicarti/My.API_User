@@ -1,12 +1,18 @@
 ﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace Api_User.Models
 {
     public class User
     {
         public int Id { get; set; }
+        public int UserTypeId { get; set; }
+        public UserType UserType { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
         public string Email { get; set; }
+        [Required]
         public string Password { get; set; }
     }
 

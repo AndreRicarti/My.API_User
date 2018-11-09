@@ -10,6 +10,12 @@
     <Compile Remove="Migrations\20180825233218_Review.Designer.cs" />
     <Compile Remove="Migrations\20181108234751_Firebase.cs" />
     <Compile Remove="Migrations\20181108234751_Firebase.Designer.cs" />
+    <Compile Remove="Migrations\20181109013419_UserType.cs" />
+    <Compile Remove="Migrations\20181109013419_UserType.Designer.cs" />
+    <Compile Remove="Migrations\20181109020033_User-UserTypeId.cs" />
+    <Compile Remove="Migrations\20181109020033_User-UserTypeId.Designer.cs" />
+    <Compile Remove="Migrations\20181109020414_User-UserTypeId.cs" />
+    <Compile Remove="Migrations\20181109020414_User-UserTypeId.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

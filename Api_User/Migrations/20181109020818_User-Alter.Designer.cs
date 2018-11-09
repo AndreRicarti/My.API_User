@@ -4,14 +4,16 @@ using Api_User.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Api_User.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181109020818_User-Alter")]
+    partial class UserAlter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,11 +113,7 @@ namespace Api_User.Migrations
                     b.Property<string>("Password")
                         .IsRequired();
 
-                    b.Property<int>("UserTypeId");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserTypeId");
 
                     b.ToTable("User");
                 });
@@ -169,14 +167,6 @@ namespace Api_User.Migrations
                     b.HasOne("Api_User.Models.PersonalDancer", "PersonalDancer")
                         .WithMany()
                         .HasForeignKey("PersonalDancerId");
-                });
-
-            modelBuilder.Entity("Api_User.Models.User", b =>
-                {
-                    b.HasOne("Api_User.Models.UserType", "UserType")
-                        .WithMany()
-                        .HasForeignKey("UserTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

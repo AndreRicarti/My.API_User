@@ -53,6 +53,7 @@ namespace Api_User.Repository
             if (entity != null)
             {
                 user.Id = entity.Id;
+                user.UserTypeId = entity.UserTypeId;
                 user.Name = entity.Name;
                 user.Email = entity.Email;
 

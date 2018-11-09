@@ -4,14 +4,16 @@ using Api_User.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Api_User.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181109013624_UserType")]
+    partial class UserType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,20 +104,13 @@ namespace Api_User.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Email")
-                        .IsRequired();
+                    b.Property<string>("Email");
 
-                    b.Property<string>("Name")
-                        .IsRequired();
+                    b.Property<string>("Name");
 
-                    b.Property<string>("Password")
-                        .IsRequired();
-
-                    b.Property<int>("UserTypeId");
+                    b.Property<string>("Password");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserTypeId");
 
                     b.ToTable("User");
                 });
@@ -138,7 +133,7 @@ namespace Api_User.Migrations
 
             modelBuilder.Entity("Api_User.Models.FirebaseUserToken", b =>
                 {
-                    b.HasOne("Api_User.Models.User", "User")
+                    b.HasOne("Api_User.Models.User", "user")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -169,14 +164,6 @@ namespace Api_User.Migrations
                     b.HasOne("Api_User.Models.PersonalDancer", "PersonalDancer")
                         .WithMany()
                         .HasForeignKey("PersonalDancerId");
-                });
-
-            modelBuilder.Entity("Api_User.Models.User", b =>
-                {
-                    b.HasOne("Api_User.Models.UserType", "UserType")
-                        .WithMany()
-                        .HasForeignKey("UserTypeId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

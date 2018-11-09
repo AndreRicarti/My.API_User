@@ -12,6 +12,7 @@ namespace Api_User.Models
         public DbSet<Style> Style { get; set; }
         public DbSet<User> User { get; set; }
         public DbSet<FirebaseUserToken> FirebaseUserTokens { get; set; }
+        public DbSet<UserType> UserTypes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
