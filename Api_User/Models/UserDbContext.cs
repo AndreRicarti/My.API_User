@@ -11,6 +11,7 @@ namespace Api_User.Models
         public DbSet<Review> Review { get; set; }
         public DbSet<Style> Style { get; set; }
         public DbSet<User> User { get; set; }
+        public DbSet<FirebaseUserToken> FirebaseUserTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +21,5 @@ namespace Api_User.Models
 
             base.OnModelCreating(modelBuilder);
         }
-
     }
 }

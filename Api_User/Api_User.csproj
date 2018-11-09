@@ -8,6 +8,8 @@
   <ItemGroup>
     <Compile Remove="Migrations\20180825233218_Review.cs" />
     <Compile Remove="Migrations\20180825233218_Review.Designer.cs" />
+    <Compile Remove="Migrations\20181108234751_Firebase.cs" />
+    <Compile Remove="Migrations\20181108234751_Firebase.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -16,8 +18,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
   </ItemGroup>
 
 </Project>
