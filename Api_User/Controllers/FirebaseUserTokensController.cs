@@ -26,9 +26,10 @@ namespace Api_User.Controllers
 
         // GET: api/FirebaseUserTokens
         [HttpGet]
-        public IEnumerable<FirebaseUserToken> GetFirebaseUserTokens()
+        public FirebaseUserToken GetFirebaseUserTokens()
         {
-            return _context.FirebaseUserTokens;
+            var firebaseUserToken = _context.FirebaseUserTokens.OrderByDescending(p => p.Id).FirstOrDefault();
+            return firebaseUserToken;
         }
 
         // GET: api/FirebaseUserTokens/5
@@ -131,8 +132,8 @@ namespace Api_User.Controllers
             return _context.FirebaseUserTokens.Any(e => e.Id == id);
         }
 
-        [HttpPost("/api/Firebase", Name = "Firebase")]
-        public void Firebase([FromBody]FirebaseTokenUser firebaseTokenUser)
+        [HttpPost("/api/Firebase/CloudMessaging", Name = "CloudMessaging")]
+        public void CloudMessaging([FromBody] FirebaseUserToken firebaseUserToken)
         {
             WebRequest tRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");
             tRequest.Method = "post";
@@ -143,7 +144,7 @@ namespace Api_User.Controllers
             tRequest.ContentType = "application/json";
             var payload = new
             {
-                to = "f76rEtTa_vk:APA91bGd3xRqWcZP5PhhKimxO2odR2J--vBJuiAlx2b7sMvu3t65brLzhSJt6_QP6uVSJfAlp_OAPMOPv2lVop1klQWsBNZxlkWW93wbzbfVzAhz2Mw87EPSZ6Vhp55alVr_F3i6iwzy",
+                to = firebaseUserToken.Token,
                 priority = "high",
                 content_available = true,
                 notification = new
