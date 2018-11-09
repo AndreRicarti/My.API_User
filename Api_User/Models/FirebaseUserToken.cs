@@ -9,6 +9,8 @@ namespace Api_User.Models
         public int UserId { get; set; }
         public User User { get; set; }
         [Required]
+        public string Token { get; set; }
+        [Required]
         public DateTime DateCreation { get; set; }
     }
 }
