@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Api_User.Models;
 using Api_User.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api_User.Controllers
@@ -15,6 +17,11 @@ namespace Api_User.Controllers
         {
             this.userRepository = userRepository;
         }
+
+        readonly ApiError apiError = new ApiError()
+        {
+            Error = new Error()
+        };
 
         // GET api/values
         [HttpGet]
@@ -87,13 +94,23 @@ namespace Api_User.Controllers
         /// </summary>
         /// <param name="loginBody">Dados do usuário para o login</param>
         /// <returns></returns>
+        [ProducesResponseType(404)]
+        [ProducesResponseType(422)]
         [HttpPost("/api/Users/Login", Name = "Login")]
         public IActionResult Login([FromBody]LoginBody loginBody)
         {
             var user = userRepository.Login(loginBody.Email, loginBody.Senha);
 
             if (user == null)
-                return NotFound("E-mail ou senha incorreto.");
+            {
+                apiError.Error = new Error
+                {
+                    Code = Convert.ToInt16(StatusCodes.Status422UnprocessableEntity).ToString(),
+                    Message = "E-mail ou Senha errada."
+                };
+
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, apiError);
+            }
 
             return new ObjectResult(user);
         }
