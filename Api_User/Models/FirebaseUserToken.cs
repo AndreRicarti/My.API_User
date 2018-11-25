@@ -11,6 +11,8 @@ namespace Api_User.Models
         [Required]
         public string Token { get; set; }
         [Required]
+        public bool Status { get; set; }
+        [Required]
         public DateTime DateCreation { get; set; }
     }
 }

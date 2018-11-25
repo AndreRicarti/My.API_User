@@ -24,12 +24,39 @@ namespace Api_User.Controllers
             _context = context;
         }
 
+        readonly ApiError apiError = new ApiError()
+        {
+            Error = new Error()
+        };
+
         // GET: api/FirebaseUserTokens
         [HttpGet]
         public FirebaseUserToken GetFirebaseUserTokens()
         {
             var firebaseUserToken = _context.FirebaseUserTokens.OrderByDescending(p => p.Id).FirstOrDefault();
             return firebaseUserToken;
+        }
+
+        // POST: api/FirebaseUserTokens/CallPersonaDancer/5
+        [HttpPost("/api/FirebaseUserToken/CallPersonaDancer", Name = "CallPersonaDancer")]
+        public IActionResult CallPersonaDancer()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var tokenPersonalDancer = from fut in _context.FirebaseUserTokens
+                                      join ec in _context.EventConfirmations on fut.UserId equals ec.UserId
+                                      where !fut.Status
+                                      select fut.Token;
+
+            if (tokenPersonalDancer == null)
+            {
+                return NotFound("Não existe Personal Dancer disponível. Aguarde um momento.");
+            }
+
+            return Ok(tokenPersonalDancer);
         }
 
         // GET: api/FirebaseUserTokens/5
@@ -95,6 +122,17 @@ namespace Api_User.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (_context.FirebaseUserTokens.Any(f => f.Token == firebaseUserToken.Token))
+            {
+                apiError.Error = new Error
+                {
+                    Code = Convert.ToInt16(StatusCodes.Status422UnprocessableEntity).ToString(),
+                    Message = "Esse usuário já tem o token cadastrado."
+                };
+
+                return StatusCode(StatusCodes.Status422UnprocessableEntity, apiError);
+            }
+
             if (firebaseUserToken.UserId != 0)
             {
                 firebaseUserToken.User = null;
@@ -137,11 +175,47 @@ namespace Api_User.Controllers
         {
             WebRequest tRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");
             tRequest.Method = "post";
-            //serverKey - Key from Firebase cloud messaging server  
+            tRequest.ContentType = "application/json; charset=utf-8";
+            
+            var data = new
+            {
+                to = firebaseUserToken.Token,
+                notification = new
+                {
+                    body = "MyDancer",
+                    title = "Vamos dançar seu lindo!",
+                    badge = 1
+                },
+                data = new
+                {
+                    payload = "André"
+                }
+            };
+            
+            var json = JsonConvert.SerializeObject(data).ToString();
+            Byte[] byteArray = Encoding.UTF8.GetBytes(json);
+            
             tRequest.Headers.Add(string.Format("Authorization: key={0}", "AAAAE3Ut1pc:APA91bH8cPa0kCh8HF5fjHj8ufMefhQCkXzoF5VYPwPMsbIhXEOAcp17FMczEt5kQY3fARkT8buaKW3bVqnl4frGsrIYLK_RGWTqU8zB4HsySYv8n_SivJ7KEpaZ-keDP0XNPNGKg9JV"));
-            //Sender Id - From firebase project setting  
             tRequest.Headers.Add(string.Format("Sender: id={0}", "83570316951"));
-            tRequest.ContentType = "application/json";
+            tRequest.ContentLength = byteArray.Length;
+
+            using (Stream dataStream = tRequest.GetRequestStream())
+            {
+                dataStream.Write(byteArray, 0, byteArray.Length);
+                using (WebResponse tResponse = tRequest.GetResponse())
+                {
+                    using (Stream dataStreamResponse = tResponse.GetResponseStream())
+                    {
+                        using (StreamReader tReader = new StreamReader(dataStreamResponse))
+                        {
+                            String sResponseFromServer = tReader.ReadToEnd();
+                            string str = sResponseFromServer;
+                        }
+                    }
+                }
+            }
+
+            /*
             var payload = new
             {
                 to = firebaseUserToken.Token,
@@ -154,10 +228,15 @@ namespace Api_User.Controllers
                     badge = 1
                 },
             };
+            */
 
-            string postbody = JsonConvert.SerializeObject(payload).ToString();
+            /*
+            String mensagem = "Teste de mensagem";
+
+            string postbody = JsonConvert.SerializeObject(mensagem).ToString();
             Byte[] byteArray = Encoding.UTF8.GetBytes(postbody);
             tRequest.ContentLength = byteArray.Length;
+
             using (Stream dataStream = tRequest.GetRequestStream())
             {
                 dataStream.Write(byteArray, 0, byteArray.Length);
@@ -173,6 +252,7 @@ namespace Api_User.Controllers
                     }
                 }
             }
+            */
         }
     }
 }

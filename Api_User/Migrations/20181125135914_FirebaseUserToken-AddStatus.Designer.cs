@@ -4,14 +4,16 @@ using Api_User.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Api_User.Migrations
 {
     [DbContext(typeof(UserDbContext))]
-    partial class UserDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181125135914_FirebaseUserToken-AddStatus")]
+    partial class FirebaseUserTokenAddStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,7 +29,8 @@ namespace Api_User.Migrations
 
                     b.Property<DateTime>("DateCreation");
 
-                    b.Property<bool>("Status");
+                    b.Property<string>("Status")
+                        .IsRequired();
 
                     b.Property<string>("Token")
                         .IsRequired();

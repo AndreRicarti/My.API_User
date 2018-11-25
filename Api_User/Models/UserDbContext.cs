@@ -13,6 +13,7 @@ namespace Api_User.Models
         public DbSet<User> User { get; set; }
         public DbSet<FirebaseUserToken> FirebaseUserTokens { get; set; }
         public DbSet<UserType> UserTypes { get; set; }
+        public DbSet<EventConfirmation> EventConfirmations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
