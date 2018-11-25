@@ -37,7 +37,7 @@ namespace Api_User.Controllers
             return firebaseUserToken;
         }
 
-        // POST: api/FirebaseUserTokens/CallPersonaDancer/5
+        // POST: api/FirebaseUserTokens/CallPersonaDancer
         [HttpPost("/api/FirebaseUserToken/CallPersonaDancer", Name = "CallPersonaDancer")]
         public IActionResult CallPersonaDancer()
         {
@@ -46,17 +46,20 @@ namespace Api_User.Controllers
                 return BadRequest(ModelState);
             }
 
-            var tokenPersonalDancer = from fut in _context.FirebaseUserTokens
-                                      join ec in _context.EventConfirmations on fut.UserId equals ec.UserId
-                                      where !fut.Status
-                                      select fut.Token;
+            FirebaseUserToken firebaseUserToken = new FirebaseUserToken
+            {
+                Token = (from fut in _context.FirebaseUserTokens
+                         join ec in _context.EventConfirmations on fut.UserId equals ec.UserId
+                         where !fut.Status
+                         select fut.Token).First()
+            };
 
-            if (tokenPersonalDancer == null)
+            if (firebaseUserToken.Token == null)
             {
                 return NotFound("Não existe Personal Dancer disponível. Aguarde um momento.");
-            }
+            } 
 
-            return Ok(tokenPersonalDancer);
+            return Ok(firebaseUserToken);
         }
 
         // GET: api/FirebaseUserTokens/5
@@ -171,15 +174,21 @@ namespace Api_User.Controllers
         }
 
         [HttpPost("/api/Firebase/CloudMessaging", Name = "CloudMessaging")]
-        public void CloudMessaging([FromBody] FirebaseUserToken firebaseUserToken)
+        public void CloudMessaging(int userId, string personalToken)
         {
             WebRequest tRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");
             tRequest.Method = "post";
             tRequest.ContentType = "application/json; charset=utf-8";
-            
+
+            CallPersonalDancer callPersonaDancer = new CallPersonalDancer
+            {
+                nameUser = _context.User.Find(userId).Name
+            };
+
+
             var data = new
             {
-                to = firebaseUserToken.Token,
+                to = personalToken,
                 notification = new
                 {
                     body = "MyDancer",
@@ -188,8 +197,8 @@ namespace Api_User.Controllers
                 },
                 data = new
                 {
-                    payload = "André"
-                }
+                    callPersonalDancer = JsonConvert.SerializeObject(callPersonaDancer).ToString()
+        }
             };
             
             var json = JsonConvert.SerializeObject(data).ToString();
