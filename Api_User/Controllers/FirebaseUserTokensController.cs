@@ -57,7 +57,7 @@ namespace Api_User.Controllers
             if (firebaseUserToken.Token == null)
             {
                 return NotFound("Não existe Personal Dancer disponível. Aguarde um momento.");
-            } 
+            }
 
             return Ok(firebaseUserToken);
         }
@@ -120,31 +120,38 @@ namespace Api_User.Controllers
         [HttpPost]
         public async Task<IActionResult> PostFirebaseUserToken([FromBody] FirebaseUserToken firebaseUserToken)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
-
-            if (_context.FirebaseUserTokens.Any(f => f.Token == firebaseUserToken.Token))
-            {
-                apiError.Error = new Error
+                if (!ModelState.IsValid)
                 {
-                    Code = Convert.ToInt16(StatusCodes.Status422UnprocessableEntity).ToString(),
-                    Message = "Esse usuário já tem o token cadastrado."
-                };
+                    return BadRequest(ModelState);
+                }
 
-                return StatusCode(StatusCodes.Status422UnprocessableEntity, apiError);
+                if (_context.FirebaseUserTokens.Any(f => f.Token == firebaseUserToken.Token))
+                {
+                    apiError.Error = new Error
+                    {
+                        Code = Convert.ToInt16(StatusCodes.Status422UnprocessableEntity).ToString(),
+                        Message = "Esse usuário já tem o token cadastrado."
+                    };
+
+                    return StatusCode(StatusCodes.Status422UnprocessableEntity, apiError);
+                }
+
+                if (firebaseUserToken.UserId != 0)
+                {
+                    firebaseUserToken.User = null;
+                }
+
+                _context.FirebaseUserTokens.Add(firebaseUserToken);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetFirebaseUserToken", new { id = firebaseUserToken.Id }, firebaseUserToken);
             }
-
-            if (firebaseUserToken.UserId != 0)
+            catch (Exception ex)
             {
-                firebaseUserToken.User = null;
+                throw;
             }
-
-            _context.FirebaseUserTokens.Add(firebaseUserToken);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFirebaseUserToken", new { id = firebaseUserToken.Id }, firebaseUserToken);
         }
 
         // DELETE: api/FirebaseUserTokens/5
@@ -173,7 +180,7 @@ namespace Api_User.Controllers
             return _context.FirebaseUserTokens.Any(e => e.Id == id);
         }
 
-        [HttpPost("/api/Firebase/CloudMessaging", Name = "CloudMessaging")]
+        [HttpPost("/api/Firebase/CloudMessaging/{userId}/{personalToken}")]
         public void CloudMessaging(int userId, string personalToken)
         {
             WebRequest tRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");
