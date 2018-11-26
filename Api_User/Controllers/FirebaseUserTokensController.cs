@@ -126,14 +126,22 @@ namespace Api_User.Controllers
                 {
                     return BadRequest(ModelState);
                 }
+                
+                var findFirebaseUserToken = _context.FirebaseUserTokens.First(f => f.Token == firebaseUserToken.Token);
 
-                if (_context.FirebaseUserTokens.Any(f => f.Token == firebaseUserToken.Token))
+                if (findFirebaseUserToken.Token == firebaseUserToken.Token)
                 {
                     apiError.Error = new Error
                     {
                         Code = Convert.ToInt16(StatusCodes.Status422UnprocessableEntity).ToString(),
                         Message = "Esse usuário já tem o token cadastrado."
                     };
+                    
+                    findFirebaseUserToken.DateCreation = firebaseUserToken.DateCreation;
+
+                    _context.FirebaseUserTokens.Update(findFirebaseUserToken);
+
+                    await _context.SaveChangesAsync();
 
                     return StatusCode(StatusCodes.Status422UnprocessableEntity, apiError);
                 }
