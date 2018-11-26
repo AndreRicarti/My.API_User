@@ -51,6 +51,7 @@ namespace Api_User.Controllers
                 Token = (from fut in _context.FirebaseUserTokens
                          join ec in _context.EventConfirmations on fut.UserId equals ec.UserId
                          where !fut.Status
+                         orderby fut.DateCreation descending
                          select fut.Token).First()
             };
 
@@ -127,23 +128,26 @@ namespace Api_User.Controllers
                     return BadRequest(ModelState);
                 }
                 
-                var findFirebaseUserToken = _context.FirebaseUserTokens.First(f => f.Token == firebaseUserToken.Token);
+                var findFirebaseUserToken = _context.FirebaseUserTokens.FirstOrDefault(f => f.Token == firebaseUserToken.Token);
 
-                if (findFirebaseUserToken.Token == firebaseUserToken.Token)
+                if (findFirebaseUserToken != null)
                 {
-                    apiError.Error = new Error
+                    if (findFirebaseUserToken.Token == firebaseUserToken.Token)
                     {
-                        Code = Convert.ToInt16(StatusCodes.Status422UnprocessableEntity).ToString(),
-                        Message = "Esse usuário já tem o token cadastrado."
-                    };
-                    
-                    findFirebaseUserToken.DateCreation = firebaseUserToken.DateCreation;
+                        apiError.Error = new Error
+                        {
+                            Code = Convert.ToInt16(StatusCodes.Status422UnprocessableEntity).ToString(),
+                            Message = "Esse usuário já tem o token cadastrado."
+                        };
 
-                    _context.FirebaseUserTokens.Update(findFirebaseUserToken);
+                        findFirebaseUserToken.DateCreation = firebaseUserToken.DateCreation;
 
-                    await _context.SaveChangesAsync();
+                        _context.FirebaseUserTokens.Update(findFirebaseUserToken);
 
-                    return StatusCode(StatusCodes.Status422UnprocessableEntity, apiError);
+                        await _context.SaveChangesAsync();
+
+                        return StatusCode(StatusCodes.Status422UnprocessableEntity, apiError);
+                    }
                 }
 
                 if (firebaseUserToken.UserId != 0)
